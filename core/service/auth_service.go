@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	"gin-starter/adapters/errs"
+	errs "gin-starter/common/err"
 	"gin-starter/core/domain"
 	"gin-starter/core/dto"
 	"gin-starter/core/ports"
@@ -59,7 +59,6 @@ func (a *authService) SignUp(request *dto.SignUpRequest) (*dto.TokenResponse, er
 	}
 
 	exist := a.repo.ExistByEmail(request.Email)
-	fmt.Println("exist", exist)
 	if exist {
 		logs.Warn(fmt.Sprintf("SingUp-[block].(email duplicate). request:%v ", request.Email))
 		return nil, errs.NewBadRequestError("email already exists")

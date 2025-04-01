@@ -17,7 +17,7 @@ func NewAuthRepositoryDB(db *gorm.DB) ports.AuthRepository {
 
 // CreateUser implements ports.AuthRepository.
 func (a *authRepositoryDB) CreateUser(user *domain.User) (*domain.User, error) {
-	if err := a.db.Create(user).Error; err != nil {
+	if err := a.db.Create(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil

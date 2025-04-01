@@ -19,3 +19,19 @@ type SignUpResponse struct {
 	Message string         `json:"message" example:"Sign Up successfully.!"`
 	Token   *TokenResponse `json:"token" `
 }
+
+type UserResponse struct {
+	Id      uint   `json:"id" example:"2"`
+	Email   string `json:"email" example:"user@example.com"`
+	Avartar string `json:"avatar" example:"http://localhost:8080/v1/file/serve/fileName"`
+}
+
+type UpdateAvartarRequest struct {
+	AvartUrl string `json:"avart_url" example:"http://localhost:8080/v1/file/serve/fileName"`
+}
+
+type UploadFileResponse struct {
+	FileName string `json:"fileName" example:"asdasdadsd2.png" `
+	FileUrl  string `json:"fileUrl" example:"http://localhost:8080/v1/file/serve/fileName"`
+	Size     int64  `json:"size" expple:"1000"`
+}

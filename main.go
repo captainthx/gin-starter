@@ -6,6 +6,7 @@ import (
 	"gin-starter/core/domain"
 	"gin-starter/docs"
 	"gin-starter/logs"
+	"gin-starter/midleware"
 	"gin-starter/routes"
 	"net/http"
 	"time"
@@ -110,6 +111,10 @@ func initRoute(db *gorm.DB) *gin.Engine {
 
 	// auth routes
 	routes.RegisAuthRoutes(router, db)
+
+	// file routes
+	router.Use(midleware.RequireAuth)
+	routes.RegisFileRoutes(router, db)
 
 	return router
 }

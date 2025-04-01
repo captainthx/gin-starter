@@ -3,7 +3,7 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"gin-starter/adapters/errs"
+	errs "gin-starter/common/err"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
