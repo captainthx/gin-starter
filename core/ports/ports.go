@@ -31,7 +31,7 @@ type UserRepository interface {
 
 type FileService interface {
 	UploadFile(file multipart.FileHeader, c *gin.Context) (*dto.UploadFileResponse, error)
-	ServerFile(fileName string) (string, error)
+	ServeFile(fileName string) (string, error)
 }
 
 type FileRepository interface {

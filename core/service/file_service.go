@@ -78,8 +78,8 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 	return response, nil
 }
 
-// ServerFile implements ports.FileService.
-func (f *fileService) ServerFile(fileName string) (string, error) {
+// ServeFile implements ports.FileService.
+func (f *fileService) ServeFile(fileName string) (string, error) {
 
 	file, err := f.repo.FindByFileName(fileName)
 	if errors.Is(err, gorm.ErrRecordNotFound) {

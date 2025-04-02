@@ -54,7 +54,7 @@ func (f *fileHandler) UploadFile(c *gin.Context) {
 func (f *fileHandler) ServeFile(c *gin.Context) {
 	fileName := c.Param("fileName")
 
-	filePath, err := f.sv.ServerFile(fileName)
+	filePath, err := f.sv.ServeFile(fileName)
 	if err != nil {
 		HandlerError(c, err)
 		return
