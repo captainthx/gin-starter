@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"gin-starter/core/dto"
 	"gin-starter/core/ports"
 	"net/http"
@@ -37,12 +36,10 @@ const (
 // @Failure     417 {object} errs.AppError
 // @Router      /v1/auth/sign-up [post]
 func (a *authHandeler) SignUp(c *gin.Context) {
-	fmt.Println("🚀 SignUp handler called!")
 
 	signUpRequest := new(dto.SignUpRequest)
 
 	if err := c.ShouldBindJSON(signUpRequest); err != nil {
-		fmt.Println("❌ JSON binding error:", err)
 		c.JSON(BadRequestStatus, gin.H{
 			"message": InvalidRequestMessage,
 		})
@@ -51,18 +48,14 @@ func (a *authHandeler) SignUp(c *gin.Context) {
 
 	if err := validate.Struct(signUpRequest); err != nil {
 		errors := err.(validator.ValidationErrors)
-		fmt.Println("❌ Validation error:", err)
 		validateError := TranslateError(errors)
 		HandlerError(c, validateError)
 		return
 	}
 
-	fmt.Println("✅ Request is valid, calling service...")
-
 	resutl, err := a.sv.SignUp(signUpRequest)
 	if err != nil {
 		HandlerError(c, err)
-		fmt.Println("❌ SignUp service error:", err.Error())
 		return
 	}
 
@@ -70,8 +63,6 @@ func (a *authHandeler) SignUp(c *gin.Context) {
 		Message: "Sign Up successfully.!",
 		Token:   resutl,
 	}
-
-	fmt.Println("✅ SignUp successful, sending response:", respone)
 
 	c.JSON(CreateSuccessStatus, respone)
 }
@@ -107,7 +98,5 @@ func (a *authHandeler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token": result,
-	})
+	c.JSON(http.StatusOK, result)
 }
