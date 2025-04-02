@@ -30,18 +30,12 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 
 	user := c.MustGet("user").(*domain.User)
 	contentType := file.Header.Get("Content-Type")
+	fileExtension := mapFileExtension(contentType)
 
-	var fileExtension string
-	switch contentType {
-	case "image/jpeg":
-		fileExtension = ".jpg"
-	case "image/png":
-		fileExtension = ".png"
-	case "image/webp":
-		fileExtension = ".webp"
-	default:
+	if !isAllowedContentType(contentType) {
 		return nil, errs.NewBadRequestError("file type not supported")
 	}
+
 	originalName := uuid.New().String()
 	filename := originalName + fileExtension
 	filePath := filepath.Join(config.UploadPath, filename)
@@ -83,6 +77,7 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 
 // ServerFile implements ports.FileService.
 func (f *fileService) ServerFile(fileName string) (string, error) {
+	//todo: search file form db
 	filePath := filepath.Join(config.UploadPath, fileName)
 
 	if _, err := os.Stat(filePath); err != nil {
@@ -92,4 +87,27 @@ func (f *fileService) ServerFile(fileName string) (string, error) {
 		return "", errs.NewBadRequestError("file not found.")
 	}
 	return filePath, nil
+}
+
+func isAllowedContentType(contentType string) bool {
+	allowedType := []string{"image/jpeg", "image/png", "image/webp"}
+	for _, allowed := range allowedType {
+		if contentType == allowed {
+			return true
+		}
+	}
+	return false
+}
+
+func mapFileExtension(contentType string) string {
+	fileExtension := ""
+	switch contentType {
+	case "image/jpeg":
+		fileExtension = ".jpg"
+	case "image/png":
+		fileExtension = ".png"
+	case "image/webp":
+		fileExtension = ".webp"
+	}
+	return fileExtension
 }
