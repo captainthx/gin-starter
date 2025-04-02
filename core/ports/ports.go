@@ -20,7 +20,7 @@ type AuthRepository interface {
 }
 
 type UserService interface {
-	GetAccount(userId uint) (*dto.UserResponse, error)
+	GetAccount(userId uint) (*dto.UserInfo, error)
 	UpdateAvatar(request *dto.UpdateAvartarRequest) error
 }
 
