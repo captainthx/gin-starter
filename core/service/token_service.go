@@ -31,15 +31,13 @@ func GenerateToken(userId uint) *dto.TokenResponse {
 }
 
 func generateAccessToken(userId uint) (string, error) {
-	acessToken := jwt.New(jwt.SigningMethodHS256)
-	claims := acessToken.Claims.(jwt.MapClaims)
-	claims["issuer"] = os.Getenv("JWT_ISSUER")
-	claims["auth"] = userId
-	claims["type"] = string(AccessToken)
-	claims["exp"] = time.Now().Add(24 * time.Hour * 3).Unix()
-
-	acessTokenString, err := acessToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
-
+	tokenBuilder := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"issuer": os.Getenv("JWT_ISSUER"),
+		"auth":   userId,
+		"type":   string(AccessToken),
+		"exp":    time.Now().Add(time.Hour * 2).Unix(),
+	})
+	acessTokenString, err := tokenBuilder.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		return "", err
 	}
@@ -47,14 +45,14 @@ func generateAccessToken(userId uint) (string, error) {
 }
 
 func generateRefreshToken(userId uint) (string, error) {
-	refreshToken := jwt.New(jwt.SigningMethodHS256)
-	claims := refreshToken.Claims.(jwt.MapClaims)
-	claims["issuer"] = os.Getenv("JWT_ISSUER")
-	claims["auth"] = userId
-	claims["type"] = string(RefreshToken)
-	claims["exp"] = time.Now().Add(time.Hour * 2).Unix()
+	tokenBuilder := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"issuer": os.Getenv("JWT_ISSUER"),
+		"auth":   userId,
+		"type":   string(RefreshToken),
+		"exp":    time.Now().Add(24 * time.Hour * 3).Unix(),
+	})
 
-	refreshTokenString, err := refreshToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	refreshTokenString, err := tokenBuilder.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 	if err != nil {
 		return "", err
