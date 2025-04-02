@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"gin-starter/core/ports"
 	"net/http"
 
@@ -54,12 +53,9 @@ func (f *fileHandler) UploadFile(c *gin.Context) {
 // @Security    BearerToken
 func (f *fileHandler) ServeFile(c *gin.Context) {
 	fileName := c.Param("fileName")
-	fmt.Println("Raw path:", c.Request.URL.Path)
-	fmt.Println("Extracted fileName:", fileName)
 
 	filePath, err := f.sv.ServerFile(fileName)
 	if err != nil {
-		fmt.Println("File not found:", filePath)
 		HandlerError(c, err)
 		return
 	}

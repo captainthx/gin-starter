@@ -20,7 +20,7 @@ type SignUpResponse struct {
 	Token   *TokenResponse `json:"token" `
 }
 
-type UserResponse struct {
+type UserInfo struct {
 	Id      uint   `json:"id" example:"2"`
 	Email   string `json:"email" example:"user@example.com"`
 	Avartar string `json:"avatar" example:"http://localhost:8080/v1/file/serve/fileName"`

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	errs "gin-starter/common/err"
 	"gin-starter/config"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type fileService struct {
@@ -33,6 +35,7 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 	fileExtension := mapFileExtension(contentType)
 
 	if !isAllowedContentType(contentType) {
+		logs.Warn(fmt.Sprintf("UploadFile-[block].(file type not supported). file:%v contentType:%v", file, contentType))
 		return nil, errs.NewBadRequestError("file type not supported")
 	}
 
@@ -42,7 +45,7 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 
 	err := c.SaveUploadedFile(&file, filePath)
 	if err != nil {
-		logs.Error(fmt.Sprintf("UploadFile-[block].(save file to disk fail!). file:%v error:%v", file, err.Error()))
+		logs.Error(fmt.Sprintf("UploadFile-[error].(save file to disk fail!). file:%v error:%v", file, err.Error()))
 		return nil, errs.NewBadRequestError("save file to disk fail!")
 	}
 
@@ -62,7 +65,7 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 
 	result, err := f.repo.CreateFile(fileModel)
 	if err != nil {
-		logs.Error(fmt.Sprintf("UploadFile-[error].(save file fail). file:%v error:%v", file, err.Error()))
+		logs.Error(fmt.Sprintf("UploadFile-[error].(save file fail). file:%v error:%v", fileModel, err.Error()))
 		return nil, errs.NewBadRequestError("save file fail!")
 	}
 
@@ -77,16 +80,19 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 
 // ServerFile implements ports.FileService.
 func (f *fileService) ServerFile(fileName string) (string, error) {
-	//todo: search file form db
-	filePath := filepath.Join(config.UploadPath, fileName)
 
-	if _, err := os.Stat(filePath); err != nil {
+	file, err := f.repo.FindByFileName(fileName)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		logs.Error(fmt.Sprintf("ServerFile-[block].(file not found). filename:%v error:%v", fileName, err.Error()))
+		return "", errs.NewNotFoundError("file not found.")
+	}
+
+	if _, err := os.Stat(file.Path); err != nil {
 		if os.IsNotExist(err) {
 			return "", errs.NewNotFoundError("file not found.")
 		}
-		return "", errs.NewBadRequestError("file not found.")
 	}
-	return filePath, nil
+	return file.Path, nil
 }
 
 func isAllowedContentType(contentType string) bool {

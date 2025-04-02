@@ -42,6 +42,29 @@ definitions:
       refresh_token:
         type: string
     type: object
+  dto.UploadFileResponse:
+    properties:
+      fileName:
+        example: asdasdadsd2.png
+        type: string
+      fileUrl:
+        example: http://localhost:8080/v1/file/serve/fileName
+        type: string
+      size:
+        type: integer
+    type: object
+  dto.UserInfo:
+    properties:
+      avatar:
+        example: http://localhost:8080/v1/file/serve/fileName
+        type: string
+      email:
+        example: user@example.com
+        type: string
+      id:
+        example: 2
+        type: integer
+    type: object
   errs.AppError:
     properties:
       code:
@@ -114,6 +137,81 @@ paths:
       summary: Sign Up
       tags:
       - Auth
+  /v1/file/serve/{fileName}:
+    get:
+      consumes:
+      - application/json
+      description: Get a file by file name
+      parameters:
+      - description: File name to serve
+        in: path
+        name: fileName
+        required: true
+        type: string
+      produces:
+      - application/*
+      responses:
+        "200":
+          description: File served successfully
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      security:
+      - BearerToken: []
+      summary: Get File
+      tags:
+      - File
+  /v1/file/upload:
+    post:
+      consumes:
+      - application/json
+      description: Upload file
+      parameters:
+      - description: File Upload Request
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UploadFileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      summary: Upload file
+      tags:
+      - File
+  /v1/user/me:
+    get:
+      consumes:
+      - application/json
+      description: Get user info From JWT token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserInfo'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      summary: User info
+      tags:
+      - User
 securityDefinitions:
   BearerToken:
     in: header

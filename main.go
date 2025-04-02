@@ -116,6 +116,11 @@ func initRoute(db *gorm.DB) *gin.Engine {
 	router.Use(midleware.RequireAuth)
 	routes.RegisFileRoutes(router, db)
 
+	// user routes
+
+	router.Use(midleware.RequireAuth)
+	routes.RegisUserRoutes(router, db)
+
 	return router
 }
 
