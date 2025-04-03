@@ -30,12 +30,12 @@ func NewFileService(repo ports.FileRepository) ports.FileService {
 // UploadFile implements ports.FileService.
 func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dto.UploadFileResponse, error) {
 
-	user := c.MustGet("user").(*domain.User)
 	contentType := file.Header.Get("Content-Type")
+	fmt.Println("content type", contentType)
 	fileExtension := mapFileExtension(contentType)
 
 	if !isAllowedContentType(contentType) {
-		logs.Warn(fmt.Sprintf("UploadFile-[block].(file type not supported). file:%v contentType:%v", file, contentType))
+		logs.Warn(fmt.Sprintf("UploadFile-[block].(file type not supported). file:%v contentType:%v", file.Filename, contentType))
 		return nil, errs.NewBadRequestError("file type not supported")
 	}
 
@@ -53,7 +53,6 @@ func (f *fileService) UploadFile(file multipart.FileHeader, c *gin.Context) (*dt
 	fileUrl := config.FullBaseUrl + config.ImageBasePath + filename
 
 	fileModel := &domain.File{
-		UserID:       user.ID,
 		OriginalName: originalName,
 		Name:         filename,
 		ContentType:  contentType,

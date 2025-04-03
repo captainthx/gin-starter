@@ -21,12 +21,14 @@ type AuthRepository interface {
 
 type UserService interface {
 	GetAccount(userId uint) (*dto.UserInfo, error)
-	UpdateAvatar(request *dto.UpdateAvartarRequest) error
+	UpdateAvatar(avatarUrl string, userId uint) error
 }
 
 type UserRepository interface {
 	FindById(userId uint) (*domain.User, error)
 	UpdateAvater(user *domain.User) error
+	FindFileByUrl(url string) (*domain.File, error)
+	DeleteFileById(fileId uint) error
 }
 
 type FileService interface {

@@ -6,12 +6,12 @@ type User struct {
 	gorm.Model
 	Email    string `json:"email" gorm:"type:varchar(255);NOT NULL;unique"`
 	Password string `json:"password" gorm:"type:varchar(255);NOT NULL"`
-	Avartar  File   `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE;"`
+	AvatarID uint   `json:"avatar_id" gorm:"default:NULL"`
+	Avatar   File   `gorm:"foreignKey:AvatarID;constraint:OnDelete:SET NULL;"`
 }
 
 type File struct {
 	gorm.Model
-	UserID       uint   `json:"user_id"`
 	OriginalName string `json:"original_name" gorm:"type:varchar(255)"`
 	Name         string `json:"name" gorm:"type:varchar(50);NOT NULL"`
 	Path         string `json:"path" gorm:"type:varchar(255);NOT NULL"`

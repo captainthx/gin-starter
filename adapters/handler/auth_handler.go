@@ -17,7 +17,7 @@ func NewAuthHandler(service ports.AuthService) *authHandeler {
 	return &authHandeler{sv: service}
 }
 
-var validate = validator.New()
+var Validate = validator.New()
 
 const (
 	CreateSuccessStatus   = http.StatusCreated
@@ -46,7 +46,7 @@ func (a *authHandeler) SignUp(c *gin.Context) {
 		return
 	}
 
-	if err := validate.Struct(signUpRequest); err != nil {
+	if err := Validate.Struct(signUpRequest); err != nil {
 		errors := err.(validator.ValidationErrors)
 		validateError := TranslateError(errors)
 		HandlerError(c, validateError)
@@ -86,7 +86,7 @@ func (a *authHandeler) Login(c *gin.Context) {
 		})
 		return
 	}
-	if err := validate.Struct(loginRequest); err != nil {
+	if err := Validate.Struct(loginRequest); err != nil {
 		errors := err.(validator.ValidationErrors)
 		HandlerError(c, errors)
 		return

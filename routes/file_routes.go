@@ -17,7 +17,7 @@ func RegisFileRoutes(router *gin.Engine, db *gorm.DB) {
 	file := router.Group("/v1/file")
 	{
 		file.POST("/upload", fileHandler.UploadFile)
-		file.GET("/serve/:fileName", fileHandler.ServeFile)
+		file.GET("/serve/:filename", fileHandler.ServeFile)
 	}
 
 }

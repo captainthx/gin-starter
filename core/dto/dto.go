@@ -27,11 +27,11 @@ type UserInfo struct {
 }
 
 type UpdateAvartarRequest struct {
-	AvartUrl string `json:"avart_url" example:"http://localhost:8080/v1/file/serve/fileName"`
+	AvatarUrl string `json:"avatarUrl" validate:"required,url" example:"http://localhost:8080/v1/file/serve/filename"`
 }
 
 type UploadFileResponse struct {
-	FileName string `json:"fileName" example:"asdasdadsd2.png" `
+	FileName string `json:"filename" example:"asdasdadsd2.png" `
 	FileUrl  string `json:"fileUrl" example:"http://localhost:8080/v1/file/serve/fileName"`
 	Size     int64  `json:"size" expple:"1000"`
 }

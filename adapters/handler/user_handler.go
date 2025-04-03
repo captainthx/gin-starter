@@ -2,10 +2,12 @@ package handler
 
 import (
 	"gin-starter/core/domain"
+	"gin-starter/core/dto"
 	"gin-starter/core/ports"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type userHandler struct {
@@ -33,4 +35,34 @@ func (u *userHandler) GetUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, result)
+}
+
+func (u *userHandler) UpdataAvatar(c *gin.Context) {
+	updAvatarRequest := new(dto.UpdateAvartarRequest)
+
+	if err := c.ShouldBindJSON(&updAvatarRequest); err != nil {
+		c.JSON(BadRequestStatus, gin.H{
+			"message": InvalidRequestMessage,
+		})
+		HandlerError(c, err)
+		return
+	}
+
+	if err := Validate.Struct(updAvatarRequest); err != nil {
+		errors := err.(validator.ValidationErrors)
+		validateError := TranslateError(errors)
+		HandlerError(c, validateError)
+		return
+	}
+	user := c.MustGet("user").(*domain.User)
+
+	err := u.sv.UpdateAvatar(updAvatarRequest.AvatarUrl, user.ID)
+	if err != nil {
+		HandlerError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Update avatart successfully",
+	})
 }

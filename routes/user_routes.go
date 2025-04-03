@@ -18,6 +18,7 @@ func RegisUserRoutes(router *gin.Engine, db *gorm.DB) {
 
 	{
 		user.GET("/me", userHadler.GetUser)
+		user.POST("/update", userHadler.UpdataAvatar)
 	}
 
 }
