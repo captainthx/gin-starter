@@ -39,7 +39,7 @@ func (a *authHandeler) SignUp(c *gin.Context) {
 
 	signUpRequest := new(dto.SignUpRequest)
 
-	if err := c.ShouldBindJSON(signUpRequest); err != nil {
+	if err := c.ShouldBindJSON(&signUpRequest); err != nil {
 		c.JSON(BadRequestStatus, gin.H{
 			"message": InvalidRequestMessage,
 		})
@@ -53,7 +53,7 @@ func (a *authHandeler) SignUp(c *gin.Context) {
 		return
 	}
 
-	resutl, err := a.sv.SignUp(signUpRequest)
+	result, err := a.sv.SignUp(signUpRequest)
 	if err != nil {
 		HandlerError(c, err)
 		return
@@ -61,7 +61,7 @@ func (a *authHandeler) SignUp(c *gin.Context) {
 
 	respone := dto.SignUpResponse{
 		Message: "Sign Up successfully.!",
-		Token:   resutl,
+		Token:   result,
 	}
 
 	c.JSON(CreateSuccessStatus, respone)
