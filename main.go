@@ -36,15 +36,27 @@ func main() {
 	if err != nil {
 		logs.Error(err)
 	}
-
 	// เริ่มต้นกำหนดค่าต่างๆ
 	config.Init()
 
 	// ตั้งค่า redis client
 	config.InitRedisClient(config.RedisBaseUrl)
 
+	//  เริ่มต้นกำหนดค่า database
+	db := initDatabase(config.DbName, config.DbUsername, config.DbPassword, config.DbHost, config.DbPort)
+
+	// เริ่มต้นกำหนดค่า router ต่างๆ
+	router := initRoute(db)
+	err = router.Run(":" + config.ServerPort)
+	if err != nil {
+		logs.Error(err)
+	}
+
+}
+
+func initDatabase(dbName string, dbUsername string, dbPassword string, dbHost string, dbPort string) *gorm.DB {
 	// สร้าง dsn (domain name server) ของ msql เพื่อใช้ กับ gorm
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.DbUsername, config.DbPassword, config.DbHost, config.DbPort, config.DbName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUsername, dbPassword, dbHost, dbPort, dbName)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
@@ -59,16 +71,10 @@ func main() {
 	)
 	if err != nil {
 		logs.Error(err)
-		return
+		return nil
 	}
 
-	// เริ่มต้นกำหนดค่า router ต่างๆ
-	router := initRoute(db)
-	err = router.Run(":" + config.ServerPort)
-	if err != nil {
-		logs.Error(err)
-	}
-
+	return db
 }
 
 // กำหนด route และตั้งค่า route ต่างๆ

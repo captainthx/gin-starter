@@ -33,8 +33,10 @@ func (a *authService) Login(request *dto.LoginRequest) (*dto.TokenResponse, erro
 		if err == gorm.ErrRecordNotFound {
 			return nil, errs.NewNotFoundError(InvalidCredentialsMsg)
 		}
-		logs.Error(fmt.Sprintf("Login-[error].(database error). request:%v error:%v ", request.Email, err.Error()))
-		return nil, errs.NewUnexpectedError("unknow error")
+	}
+
+	if result == nil { // ตรวจสอบว่า result ไม่ใช่ nil
+		return nil, errs.NewNotFoundError(InvalidCredentialsMsg)
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(request.Password))
